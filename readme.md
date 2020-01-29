@@ -45,6 +45,8 @@ And with the advantage of boolean prop, we could get it even quicker (in terms o
 # Performance Concern
 
 Take a look at `/native/example` folder
+
+
 ![Performance test](./performance_test.png "Performance test")
 
 # Best Practice
