@@ -44,8 +44,8 @@ And with the advantage of boolean prop, we could get it even quicker (in terms o
 
 # Performance Concern
 
-Take a look at `/native/example` folder
-
+- Take a look at `/native/example` folder
+- In the speed test, we compared it with normal `View` component, and `styled-components`. The test code is really simple, PR is welcome.
 
 ![Performance test](./performance_test.png "Performance test")
 
