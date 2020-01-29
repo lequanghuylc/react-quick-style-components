@@ -2,6 +2,57 @@
 
 Quickly style react-native components (reactjs comming soon) via props
 
+# Main Idea
+
+We usually style our component like this (inline or StyleSheet)
+
+```
+{
+  width: 50,
+  height: 50,
+  margin: 10,
+  backgroundColor: 'green',
+  justifyContent: 'center',
+  alignItems: 'center',
+}
+```
+
+What if we can have a really quick way of styling by using prop. Like:
+
+```
+<Col
+  width={50}
+  height={50}
+  margin={10}
+  backgroundColor="green"
+  justifyContent="center"
+  alignItems="center"
+/>
+```
+
+And with the advantage of boolean prop, we could get it even quicker (in terms of Coding convenience), like:
+
+```
+<Col
+  width50
+  height50
+  margin10
+  backgroundColor="green"
+  middle // common global styleset, equal { justifyContent: 'center', alignItems: 'center'  }
+/>
+```
+
+# Performance Concern
+
+Take a look at `/native/example` folder
+![Performance test](./performance_test.png "Performance test")
+
+# Best Practice
+
+1. If you have more than 3 styled props, put it in StyleSheet. Too many styled props will not be convenient anymore.
+2. Create your own common style objects to avoid repeating your self
+3. Organize the components and keep them small and simple
+
 ## Usage
 
 ### Initial setup
