@@ -2,6 +2,32 @@
 
 Quickly style react-native components (reactjs comming soon) via props
 
+# Contents
+
+- [Installation](#installation)
+- [Main Idea](#main-idea)
+- [Performance Concern](#performance-concern)
+- [Best Practice](#best-practice)
+- [Usage](#usage)
+- [Styled Props](#styled-props)
+- [Col Component](#col-component)
+- [Row Component](#row-component)
+- [Text Component](#text-component)
+
+# Installation
+
+```
+npm install react-quick-style-components --save
+```
+or
+```
+yarn add react-quick-style-components
+```
+
+No linking required
+
+Dependicies: `js-events-listener`, `react-native-animatable` (Also no linking required)
+
 # Main Idea
 
 We usually style our component like this (inline or StyleSheet)
@@ -132,3 +158,60 @@ initQuickStyle.setAdditionStyles(additionStyles);
     <Row flex1 bgMain onPress={handlePress}></Row>
   )
 ```
+
+# Styled Props
+
+- Pretty much all the styled properties (take a look at `./utils/globalProps.ts` line 22)
+- Auto split number value from Boolean props
+
+```
+<Col
+  width100
+  zIndex1
+  flex1
+/>
+```
+
+Equal to
+```
+<Col
+  width={100}
+  zIndex={1}
+  flex={1}
+/>
+```
+- Common style sets (take a look at `./utils/commonStyle.ts`)
+
+| Prop | Description |
+|---|---|
+|**`middle`**|Align items center (vertically and horizontally)|
+|**`flex1`**|Flex 1|
+|**`absolute`**|Position absolute|
+|**`absoluteFill`**|Position absolute and full parent width, height|
+|**`bgWhite`**|White background|
+|**`colorWhite`**|White color text|
+|**`colorMain`**|Main color text, (after run `initQuickStyle.setMainColor`)|
+|**`bgMain`**|Main background color, (after run `initQuickStyle.setMainColor`)|
+|**`bold`**|bold fontweight text|
+|**`width100p`**|width 100%|
+|**`height100p`**|height 100%|
+|**`overflowH`**|overflow hidden|
+
+# Col Component
+
+- Flex direction `column`
+- If `onPress` prop is given, it will operate like a `TouchableOpacity` (activeOpacity `0.9`)
+- If `animation` prop is given, it will operate like a `<Animatable.View {...animation} />`
+
+# Row Component
+
+- `onPress` & `animation` work exactly like `Col`
+- Flex direction `row`
+- Align items `center` by default
+
+# Text Component
+
+| Prop | Description |
+|---|---|
+|**`bold`**|Change font to Bold font if that font was declared at `initQuickStyle.setFontFamily`|
+|**`semiBold`**|Change font to Semi Bold font if that font was declared at `initQuickStyle.setFontFamily`|
