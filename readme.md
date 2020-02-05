@@ -215,3 +215,11 @@ Equal to
 |---|---|
 |**`bold`**|Change font to Bold font if that font was declared at `initQuickStyle.setFontFamily`|
 |**`semiBold`**|Change font to Semi Bold font if that font was declared at `initQuickStyle.setFontFamily`|
+|**`light`**|The same|
+|**`medium`**|The same|
+|**`extraBold`**|The same|
+|**`black`**|The same|
+
+Note: If you declare more than one of those props above, the priority will be the lighter font.
+
+Example `<Text light bold />` will use `light` font

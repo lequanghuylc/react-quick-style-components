@@ -1,25 +1,44 @@
 import React, { Component } from 'react';
 import {
   Text as TextDefault,
-  StyleSheet,
 } from 'react-native';
 
 import { propsToStyle } from '../utils/globalProps';
 
 interface DefaultFontType {
-  family: { regular: string, bold: string, semiBold: string },
+  family: {
+    regular: string,
+    bold: string,
+    semiBold: string,
+    extraBold: string,
+    black: string,
+    light: string,
+    medium: string,
+  },
   color: string,
 }
 
 let defaultFont = {
-  family: { regular: undefined, bold: undefined, semiBold: undefined },
+  family: {
+    regular: undefined,
+    bold: undefined,
+    semiBold: undefined,
+    extraBold: undefined,
+    black: undefined,
+    light: undefined,
+    medium: undefined,
+  },
   color: undefined,
 };
 
 export interface Props {
   onRef?(): void,
-  bold?: boolean,
-  semiBold?: boolean,
+  bold?: Boolean,
+  semiBold?: Boolean,
+  extraBold?: Boolean,
+  black?: Boolean,
+  light?: Boolean,
+  medium?: Boolean,
   [key: string]: any,
 }
 
@@ -30,10 +49,20 @@ export default class Text extends Component<Props> {
   }
 
   render() {
-    const { style, bold, semiBold } = this.props;
+    const { style, bold, semiBold, extraBold, black, light, medium } = this.props;
+    let fontFamily;
+    switch(true) {
+      case (light): fontFamily = defaultFont.family.light; break;
+      case (medium): fontFamily = defaultFont.family.medium; break;
+      case (semiBold): fontFamily = defaultFont.family.semiBold; break;
+      case (bold): fontFamily = defaultFont.family.bold; break;
+      case (extraBold): fontFamily = defaultFont.family.extraBold; break;
+      case (black): fontFamily = defaultFont.family.black; break;
+      default: fontFamily = defaultFont.family.regular;
+    }
     const combinedStyle = [
       {
-        fontFamily: !!bold ? defaultFont.family.bold : !!semiBold ? defaultFont.family.semiBold : defaultFont.family.regular,
+        fontFamily,
         color: defaultFont.color,
       },
       propsToStyle(this.props),
@@ -49,8 +78,3 @@ export default class Text extends Component<Props> {
   }
 }
 
-const styles = StyleSheet.create({
-  defaultFont: {
-    fontFamily: 'SF Pro Text',
-  },
-});
