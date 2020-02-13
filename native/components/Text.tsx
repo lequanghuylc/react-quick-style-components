@@ -5,7 +5,7 @@ import {
 
 import { propsToStyle } from '../utils/globalProps';
 
-interface DefaultFontType {
+export interface DefaultFontType {
   family: {
     regular: string,
     bold: string,

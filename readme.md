@@ -10,6 +10,7 @@ Quickly style react-native components (reactjs comming soon) via props
 - [Best Practice](#best-practice)
 - [Usage](#usage)
 - [Styled Props](#styled-props)
+- [Style Hooks](#style-hooks)
 - [Col Component](#col-component)
 - [Row Component](#row-component)
 - [Text Component](#text-component)
@@ -196,6 +197,20 @@ Equal to
 |**`width100p`**|width 100%|
 |**`height100p`**|height 100%|
 |**`overflowH`**|overflow hidden|
+
+# Style Hooks
+
+`Style Hooks` is in easy way to transform value of `styled props`. For example when you want to normalize your font size
+
+```js
+initQuickStyle.setStyleHooks({
+  fontSize: (value) => {
+    return normalize(value)
+  },
+});
+```
+
+After that, all of your `<Text fontSize={xyz} />` will go thourgh that function and converted to a new value.
 
 # Col Component
 

@@ -6,6 +6,8 @@ class GlobalStyle {
 
   additionStyles = {};
 
+  styleHooks : any = {};
+
   setMainColor(color) {
     this.MAIN_COLOR = color;
   }
@@ -13,6 +15,10 @@ class GlobalStyle {
   setAdditionStyles = (styles) => {
     if (typeof styles !== 'object') throw new Error('setAdditionStyles must use object as object of styles');
     this.additionStyles = styles;
+  }
+
+  setStyleHooks = (hooks) => {
+    this.styleHooks = hooks;
   }
 
 }
@@ -51,16 +57,23 @@ const hasNumber = (myString) => {
   return /\d/.test(myString);
 };
 
+const styleHooks = (key, value) => {
+  if(globalStyleInstance.styleHooks[key]) {
+    return globalStyleInstance.styleHooks[key](value);
+  }
+  return value;
+}
+
 export const propsToStyle = (props = {}) => {
   let style = {};
   for (let key in props) {
-    if (styleProperties.indexOf(key) !== -1) style[key] = props[key];
+    if (styleProperties.indexOf(key) !== -1) style[key] = styleHooks(key, props[key]);
     else if (hasNumber(key)) { // make prop style with number, flex1 -> flex: 1
       let matchArr = key.match(/\d+/g);
       if (matchArr != null && matchArr.length === 1 && key.indexOf(matchArr[0]) === key.length - matchArr[0].length) {
         const numberValue = Number(matchArr[0]);
         const propertyValue = key.substring(0, key.indexOf(matchArr[0]));
-        const styleObject = { [propertyValue]: numberValue };
+        const styleObject = { [propertyValue]: styleHooks(propertyValue, numberValue) };
         style = Object.assign(style, styleObject);
       }
     }
