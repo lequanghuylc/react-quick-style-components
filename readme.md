@@ -12,22 +12,23 @@ Quickly style react-native components (reactjs comming soon) via props
 - [Styled Props](#styled-props)
 - [Style Hooks](#style-hooks)
 - [Col Component](#col-component)
-- [Row Component](#row-component)
+- [Row Component & Responsive](#row-component)
 - [Text Component](#text-component)
 
 # Installation
 
-```
-npm install react-quick-style-components --save
-```
-or
+## React Native
 ```
 yarn add react-quick-style-components
 ```
 
 No linking required
 
-Dependicies: `js-events-listener`, `react-native-animatable` (Also no linking required)
+## React JS
+
+```
+yarn add react-native-web react-quick-style-components
+```
 
 # Main Idea
 
@@ -71,7 +72,6 @@ And with the advantage of boolean prop, we could get it even quicker (in terms o
 
 # Performance Concern
 
-- Take a look at `/native/example` folder
 - In the speed test, we compared it with normal `View` component, and `styled-components`. The test code is really simple, PR is welcome.
 
 ![Performance test](./performance_test.png "Performance test")
@@ -216,25 +216,67 @@ After that, all of your `<Text fontSize={xyz} />` will go thourgh that function 
 
 - Flex direction `column`
 - If `onPress` prop is given, it will operate like a `TouchableOpacity` (activeOpacity `0.9`)
-- If `animation` prop is given, it will operate like a `<Animatable.View {...animation} />`
 
 # Row Component
 
-- `onPress` & `animation` work exactly like `Col`
+- `onPress` work exactly like `Col`
 - Flex direction `row`
-- Align items `center` by default
+- Align items `center` by default. If `stretch` props is specific (`true`), the children will have 100% height
+- This component has responsive settings
+
+```typescript
+export interface Props {
+  onRef?(): void,
+  stretch?: boolean,
+  responsive?: {
+    sm?: string,
+    md?: string,
+    lg?: string,
+    xl?: string,
+    [breakpoint: string]: string,
+  },
+  [key: string]: any,
+}
+```
+
+For example
+
+```jsx
+<Row responsive={{ xs: '100%', sm: '1:1:2', md: '1:2:1' }}>
+  <Col width100p height100>
+    <Col margin10 flex1 backgroundColor="black" />
+  </Col>
+  <Col width100p height100>
+    <Col margin10 flex1 backgroundColor="red" />
+  </Col>
+  <Col width100p height100>
+    <Col margin10 flex1 backgroundColor="pink" />
+  </Col>
+</Row>
+```
+
+
+- width breakpoints follow Bootstrap CSS Web framework `xs`, `sm`, `md`, `lg` and `xl`
+- `<Row responsive={{ md: '1:.' }} />`
+  - every child will have flex 1 in md breakpoint
+
+- `<Row responsive={{ md: '1:2' }} />`
+  - only render two first child, with flex 1 and flex 2 in md breakpoint
+
+- `<Row responsive={{ md: '1:2', sm: '100%' }} />`
+  - same with the above, and in sm breakpoint all will have 100% width, and flex wrap style
 
 # Text Component
 
+- define default font family and color with `Text.setFontFamily`
+
 | Prop | Description |
 |---|---|
-|**`bold`**|Change font to Bold font if that font was declared at `initQuickStyle.setFontFamily`|
-|**`semiBold`**|Change font to Semi Bold font if that font was declared at `initQuickStyle.setFontFamily`|
+|**`bold`**|Change font to Bold font if that font was declared at `initQuickStyle.setAdditionStyles`|
+|**`semiBold`**|Change font to Semi Bold font if that font was declared at `initQuickStyle.setAdditionStyles`|
 |**`light`**|The same|
 |**`medium`**|The same|
 |**`extraBold`**|The same|
 |**`black`**|The same|
 
-Note: If you declare more than one of those props above, the priority will be the lighter font.
-
-Example `<Text light bold />` will use `light` font
+Example `<Text light bold />`
