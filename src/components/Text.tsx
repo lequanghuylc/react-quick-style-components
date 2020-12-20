@@ -18,6 +18,7 @@ export let defaultFont = {
 export interface Props {
   onRef?(): void,
   center?: boolean,
+  text?: string,
   [key: string]: any,
 }
 
@@ -28,7 +29,7 @@ export default class Text extends Component<Props> {
   }
 
   render() {
-    const { style, center } = this.props;
+    const { style, center, text, children } = this.props;
     const combinedStyle = [
       defaultFont,
       center ? { textAlign: 'center' } : {},
@@ -40,7 +41,9 @@ export default class Text extends Component<Props> {
         {...this.props}
         ref={this.props.onRef}
         style={combinedStyle}
-      />
+      >
+        {text || children}
+      </TextDefault>
     )
   }
 }
