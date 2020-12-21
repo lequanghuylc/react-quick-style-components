@@ -38,9 +38,11 @@ export default class Row extends Component<Props> {
         flexWrap={responsiveRule.includes('%') ? 'wrap' : undefined}
         ref={this.props.onRef}
       >
-        <Responsive rules={responsive} onChange={rule => this.setState({ responsiveRule: rule })}>
-          {children}
-        </Responsive>
+        {Boolean(!responsive || children === undefined) ? children : (
+          <Responsive rules={responsive} onChange={rule => this.setState({ responsiveRule: rule })}>
+            {children}
+          </Responsive>
+        )}
       </Col>
     );
   }
