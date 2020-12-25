@@ -13,6 +13,8 @@ export interface Props {
   activeOpacity? : number,
   onLayout?(): void,
   onLongPress?(event: any): void,
+  onMouseEnter?(event: any): void,
+  onMouseLeave?(event: any): void,
   style?: any,
   [key: string]: any,
 }
@@ -43,9 +45,10 @@ export default class Button extends Component<Props> {
   };
 
   render() {
-    const { style, activeOpacity, children, onLayout, onLongPress } = this.props;
+    const { style, activeOpacity, children, onLayout, onLongPress, onMouseEnter, onMouseLeave } = this.props;
+    const hoverProps = !!onMouseEnter && !!onMouseLeave ? { onMouseEnter, onMouseLeave } : {};
     return (
-      <TouchableOpacity onLongPress={onLongPress} onLayout={onLayout} activeOpacity={activeOpacity || DEFAULT_OPACITY} onPress={this.handlePress} style={style}>
+      <TouchableOpacity {...hoverProps} onLongPress={onLongPress} onLayout={onLayout} activeOpacity={activeOpacity || DEFAULT_OPACITY} onPress={this.handlePress} style={style}>
         {children}
       </TouchableOpacity>
     );

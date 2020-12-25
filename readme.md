@@ -221,6 +221,17 @@ After that, all of your `<Text fontSize={xyz} />` will go thourgh that function 
 - `onHoverStyle`: it's a web prop: Pass a object style here and it will apply when user hover over the component.
 - `useHoverNativeProps`: apply the hover style without rerendering the component. credit to the guys here https://github.com/necolas/react-native-web/issues/205 , let me know if you have trouble using this prop
 
+Example: 
+```jsx
+<Col
+  middle
+  style={styles.previewBox}
+  useHoverNativeProps
+  onHoverStyle={{ borderColor: COLOR.MAIN, borderWidth: 1, borderRadius: 4 }}
+>
+  {child}
+</Col>
+```
 
 # Row Component
 
