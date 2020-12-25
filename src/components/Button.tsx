@@ -11,9 +11,8 @@ export interface Props {
   noPrevent? : boolean,
   eventName?: string,
   activeOpacity? : number,
-  noRipple?: boolean,
   onLayout?(): void,
-  onLongPress?(): void,
+  onLongPress?(event: any): void,
   style?: any,
   [key: string]: any,
 }

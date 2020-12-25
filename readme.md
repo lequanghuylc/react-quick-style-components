@@ -1,6 +1,6 @@
 # React Quick Style Components
 
-Quickly style react-native components (reactjs comming soon) via props
+Quickly style react-native (and reactjs) components  via props
 
 # Contents
 
@@ -25,6 +25,8 @@ yarn add react-quick-style-components
 No linking required
 
 ## React JS
+
+Assuming you use `create-react-app` or `expo web`:
 
 ```
 yarn add react-native-web react-quick-style-components
@@ -216,13 +218,16 @@ After that, all of your `<Text fontSize={xyz} />` will go thourgh that function 
 
 - Flex direction `column`
 - If `onPress` prop is given, it will operate like a `TouchableOpacity` (activeOpacity `0.9`)
+- `onHoverStyle`: it's a web prop: Pass a object style here and it will apply when user hover over the component.
+- `useHoverNativeProps`: apply the hover style without rerendering the component. credit to the guys here https://github.com/necolas/react-native-web/issues/205 , let me know if you have trouble using this prop
+
 
 # Row Component
 
-- `onPress` work exactly like `Col`
+- `onPress` work exactly like `Col`, infact it's `Col` under the hood, so every props of `Col` can be used here.
 - Flex direction `row`
 - Align items `center` by default. If `stretch` props is specific (`true`), the children will have 100% height
-- This component has responsive settings
+- This component has responsive settings.
 
 ```typescript
 export interface Props {

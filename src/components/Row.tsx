@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 
-import {
-  Dimensions
-} from 'react-native';
+import { Props as ButtonProps } from './Button';
 
 import Col from './Col';
 import Responsive from './Responsive';
@@ -20,7 +18,7 @@ export interface Props {
   [key: string]: any,
 }
 
-export default class Row extends Component<Props> {
+export default class Row extends Component<Props & ButtonProps> {
 
   state = {
     responsiveRule: '',

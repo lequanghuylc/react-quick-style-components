@@ -16,6 +16,31 @@ export interface Props {
   [key: string]: any,
 }
 
+(() => {
+  if (Platform.OS !== 'web') return;
+  const style = document.createElement('style')
+  style.textContent = `
+    ::-webkit-scrollbar {
+      width: 8px;
+      cursor: grab;
+    }
+    ::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,0.3); 
+      border-radius: 5px;
+    }
+  
+    ::-webkit-scrollbar-thumb {
+      border-radius: 5px;
+      -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,0.5); 
+    }
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: dark;
+    }
+  `;
+  document.head.append(style);
+})();
+
 export default class Scroll extends Component<Props> {
 
   render() {
@@ -28,8 +53,8 @@ export default class Scroll extends Component<Props> {
     const scrollIndicatorProps = horizontal ? {
       showsHorizontalScrollIndicator: defaultShowIndicator,
     } : {
-      showsVerticalScrollIndicator: defaultShowIndicator,
-    };
+        showsVerticalScrollIndicator: defaultShowIndicator,
+      };
     return (
       <ScrollView
         ref={onRef}
@@ -40,12 +65,12 @@ export default class Scroll extends Component<Props> {
         onScroll={onScroll}
         {...scrollViewProps}
       >
-       {children}
+        {children}
       </ScrollView>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  
+
 })
