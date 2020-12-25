@@ -1,6 +1,6 @@
 {
   "name": "react-quick-style-components",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Quickly style react-native and reactjs components via props",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import Button from './Button';
 import { propsToStyle } from '../utils/globalProps';
-
+import _ from 'lodash';
 import { Props as ButtonProps } from './Button';
 
 export interface Props {
@@ -16,6 +16,18 @@ export interface Props {
 }
 
 export default class Col extends Component<Props & ButtonProps> {
+
+  static getDerivedStateFromProps(props, state) {
+    if (!props) return null;
+    const { onHoverStyle } = props;
+    if (!onHoverStyle) return null;
+    const newStyle = [
+      propsToStyle(props),
+      props.style,
+    ];
+    if (_.isEqual(newStyle, state.style)) return null;
+    return { style: newStyle };
+  }
 
   state = {
     style: (() => {
@@ -49,10 +61,11 @@ export default class Col extends Component<Props & ButtonProps> {
       this.props.style,
     ];
 
-    const hoverProps = !onHoverStyle ? {} : {
+    const hoverProps = !onHoverStyle ? { style: combinedStyle } : {
       onMouseEnter: () => this.setStyles([combinedStyle, onHoverStyle]),
       onMouseLeave: () => this.setStyles(combinedStyle),
-    }
+      style: style,
+    };
     
     return typeof onPress === 'function' ? (
       <Button
@@ -61,7 +74,6 @@ export default class Col extends Component<Props & ButtonProps> {
         activeOpacity={0.9}
         {...this.props}
         {...hoverProps}
-        style={style}
       />
     ) : (
       <View
@@ -69,7 +81,6 @@ export default class Col extends Component<Props & ButtonProps> {
         {...this.props}
         // @ts-ignore
         {...hoverProps}
-        style={style}
       />
     );
   }
