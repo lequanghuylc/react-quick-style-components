@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import {
   useWindowDimensions,
+  Dimensions,
 } from 'react-native';
 
 import Col from './Col';
@@ -14,6 +15,7 @@ export interface Props {
     [breakpoint: string]: string,
   },
   onChange(ruleString : string): void,
+  hasWrapper?: boolean,
   children: any,
 }
 
@@ -37,59 +39,104 @@ responsive usage
     -> same with the above, and in sm breakpoint all will have 100% width, and flex wrap style
 */
 
-const Responsive = (props : Props) => {
-  const { width } = useWindowDimensions();
-  
-  const { children, rules, onChange } = props;
-  if (!rules) return children;
+export const ResponsiveContext = createContext({
+  width: Dimensions.get('window').width,
+  useCustomViewport: false,
+});
 
-  const getResponsiveRule = () => {
+export const ResponsiveViewport = ({ width, children }) => {
+  return (
+    <ResponsiveContext.Provider value={{ width, useCustomViewport: true }}>
+      {children}
+    </ResponsiveContext.Provider>
+  )
+}
+
+export const getResponsiveRule = (viewportWidth, rules) => {
+    // console.log('viewportWidth', viewportWidth);
     const minWidth = ['xl', 'lg', 'md', 'sm', 'xs'];
     let currentBreakpoint = 'xs';
     for (let i=0; i<= minWidth.length; i++) {
       const breakpointCode = minWidth[i];
-      if (width > minWidthBreakpoints[breakpointCode]) {
+      if (viewportWidth > minWidthBreakpoints[breakpointCode]) {
         currentBreakpoint = breakpointCode;
         if (!rules[breakpointCode]) continue;
         break;
       }
     }
+    // console.log('currentBreakpoint', currentBreakpoint);
     const responsiveRule = rules[currentBreakpoint];
     return responsiveRule;
-  }
-  const responsiveRule = getResponsiveRule();
-  if (!responsiveRule) return children;
+}
 
+const Responsive = (props : Props) => {
+  const [uniqueId] = useState('responsive_id_' + Math.random());
+  const { width } = useWindowDimensions();
+
+  const { children, rules, onChange } = props;
+  if (!rules) return children;
+
+  const customViewport = useContext(ResponsiveContext);
+
+  // const getResponsiveRule = () => {
+  //   const viewportWidth = customViewport.useCustomViewport ? customViewport.width : width;
+  //   // console.log('viewportWidth', viewportWidth);
+  //   const minWidth = ['xl', 'lg', 'md', 'sm', 'xs'];
+  //   let currentBreakpoint = 'xs';
+  //   for (let i=0; i<= minWidth.length; i++) {
+  //     const breakpointCode = minWidth[i];
+  //     if (viewportWidth > minWidthBreakpoints[breakpointCode]) {
+  //       currentBreakpoint = breakpointCode;
+  //       if (!rules[breakpointCode]) continue;
+  //       break;
+  //     }
+  //   }
+  //   // console.log('currentBreakpoint', currentBreakpoint);
+  //   const responsiveRule = rules[currentBreakpoint];
+  //   return responsiveRule;
+  // }
+  const viewportWidth = customViewport.useCustomViewport ? customViewport.width : width;
+  const responsiveRule = getResponsiveRule(viewportWidth, rules);
+  if (!responsiveRule) return children;
   useEffect(() => {
     onChange(responsiveRule);
-  }, [width]);
+  }, [width, customViewport.width]);
 
+  const childrenArray = React.Children.toArray(props.hasWrapper ? children?.props?.children : children);
+  
+  // console.log('childrenArray', props.hasWrapper, childrenArray, children);
   switch(true) {
     case responsiveRule.includes('%'):
       const percent = Number(responsiveRule.replace('%', ''));
       if (isNaN(percent)) return children;
-      else return React.Children.map(children, child => (
-        React.cloneElement(<Col width={responsiveRule}>{child}</Col>)
-    ));
+      return childrenArray.map((child, childIndex) => (
+        <Col width={responsiveRule} key={'responsive-r1-'+childIndex+uniqueId}>{child}</Col>
+      ));
+      // else return React.Children.map(children, child => (
+      //   React.cloneElement()
+
+    // ));
     break;
     case (responsiveRule === '1:.'):
-      return React.Children.map(children, child => (
-        React.cloneElement(<Col flex1>{child}</Col>)
-      ));
+      // return React.Children.map(children, child => (
+      //   React.cloneElement(<Col flex1>{child}</Col>)
+      // ));
+      return childrenArray.map((child, childIndex) => (
+        <Col flex1 key={'responsive-r2-'+childIndex+uniqueId}>{child}</Col>
+      ))
     break;
     case (responsiveRule.includes(':')):
       const flexs = responsiveRule.split(':').map(val => Number(val));
       if (flexs.filter(val => isNaN(val)).length > 0) {
         throw new Error('invalid responsive rule');
       }
+      // const childrenArray = React.Children.toArray(children);
       return flexs.map((val, i) => (
-        <Col flex={val} key={"res-"+Math.random()}>{children[i]}</Col>
+        <Col flex={val} key={"responsive-r3-"+i+uniqueId}>{childrenArray[i]}</Col>
       ));
     break;
     default: return children;
   }
-
-
 };
 
 export default Responsive;

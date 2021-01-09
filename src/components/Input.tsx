@@ -10,12 +10,14 @@ import { defaultFont } from './Text';
 
 export interface Props {
   id?: string,
-  onRef?(): void,
+  onRef?(ref: any): void,
   value?: any,
   onChange?(newValue : any): any,
   multiLines?: boolean,
   placeholder?: string,
   style?: any,
+  onSubmitEditing?(): any,
+  onEnter?(): any,
   inputProps?: TextInputProps,
   [key: string]: any,
 }
@@ -33,7 +35,9 @@ interface TextInstanceManager {
   [id: string]: {
     getValue(): string,
     setValue(newValue: string): void,
-    text: any,
+    onChange(newValue: string): void,
+    focus(): void,
+    val: any,
   },
 }
 
@@ -61,10 +65,12 @@ export default class Input extends Component<Props> {
           forceUseValueState: true,
         });
       },
-      text: undefined,
+      focus: () => this.focus(),
+      onChange: this.handleChange,
+      val: undefined,
     }
     // just trying to make it jQuery-like, get and set in one function
-    textInstances[id].text = function() {
+    textInstances[id].val = function() {
       if (arguments.length === 0) return textInstances[id].getValue();
       textInstances[id].setValue(arguments[0]);
     }.bind(this);
@@ -94,8 +100,19 @@ export default class Input extends Component<Props> {
     return value;
   }
 
+  focus = () => {
+    this.inputRef.focus();
+  }
+
+  inputRef;
+  onRef = (componentRef) => {
+    const { onRef } = this.props;
+    this.inputRef = componentRef;
+    !!onRef && onRef(componentRef);
+  }
+
   render() {
-    const { style, onRef, placeholder, multiLines, inputProps } = this.props;
+    const { style, placeholder, multiLines, onSubmitEditing, onEnter, inputProps } = this.props;
     const value = this.getValue();
     
     return (
@@ -107,9 +124,10 @@ export default class Input extends Component<Props> {
         underlineColorAndroid="transparent"
         placeholderTextColor={'rgba(0,0,0,0.2)'}
         placeholder={placeholder}
-        ref={onRef}
+        ref={this.onRef}
         textAlignVertical="top"
         multiline={multiLines}
+        onSubmitEditing={onSubmitEditing || onEnter}
         {...inputProps}
       />
     )

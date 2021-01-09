@@ -12,7 +12,7 @@ import Text from './Text';
 import { propsToStyle } from '../utils/globalProps';
 
 export interface Props {
-  onRef?(): void,
+  onRef?(ref: any): void,
   style?: any,
   imageProps?: ImageProps,
   source: ImageSourcePropType,

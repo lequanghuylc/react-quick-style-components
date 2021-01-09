@@ -1,0 +1,38 @@
+{
+  "Col": {
+    "id": "Col",
+    "name": "Col",
+    "from": "Col",
+    "core": true
+  },
+  "Row": {
+    "id": "Row",
+    "name": "Row",
+    "from": "Row",
+    "core": true
+  },
+  "Text": {
+    "id": "Text",
+    "name": "Text",
+    "from": "Text",
+    "core": true
+  },
+  "Input": {
+    "id": "Input",
+    "name": "Input",
+    "from": "Input",
+    "core": true
+  },
+  "Scroll": {
+    "id": "Scroll",
+    "name": "Scroll",
+    "from": "Scroll",
+    "core": true
+  },
+  "Img": {
+    "id": "Img",
+    "name": "Img",
+    "from": "Img",
+    "core": true
+  }
+}

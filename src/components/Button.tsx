@@ -6,12 +6,12 @@ import {
 } from 'react-native';
 
 export interface Props {
-  onRef?(): void,
+  onRef?(ref: any): void,
   onPress?(event: any): void,
   noPrevent? : boolean,
-  eventName?: string,
+  id?: string,
   activeOpacity? : number,
-  onLayout?(): void,
+  onLayout?(event: any): any,
   onLongPress?(event: any): void,
   onMouseEnter?(event: any): void,
   onMouseLeave?(event: any): void,
@@ -39,26 +39,26 @@ const pressEventListeners : PressEventListener = {};
 
 export default class Button extends Component<Props> {
 
-  static onPressEvent = (eventName, callback) => {
-    if (!eventName || !callback) return;
-    pressEventListeners[eventName] = callback;
+  static onPressEvent = (id, callback) => {
+    if (!id || !callback) return;
+    pressEventListeners[id] = callback;
   };
 
   render() {
-    const { style, activeOpacity, children, onLayout, onLongPress, onMouseEnter, onMouseLeave } = this.props;
+    const { style, activeOpacity, children, onLayout, onLongPress, onMouseEnter, onMouseLeave, onRef } = this.props;
     const hoverProps = !!onMouseEnter && !!onMouseLeave ? { onMouseEnter, onMouseLeave } : {};
     return (
-      <TouchableOpacity {...hoverProps} onLongPress={onLongPress} onLayout={onLayout} activeOpacity={activeOpacity || DEFAULT_OPACITY} onPress={this.handlePress} style={style}>
+      <TouchableOpacity ref={onRef} {...hoverProps} onLongPress={onLongPress} onLayout={onLayout} activeOpacity={activeOpacity || DEFAULT_OPACITY} onPress={this.handlePress} style={style}>
         {children}
       </TouchableOpacity>
     );
   }
 
   handlePress = (e) => {
-    const { noPrevent, onPress, eventName } = this.props;
+    const { noPrevent, onPress, id } = this.props;
     noPrevent ? onPress(e) : preventDoublePress(onPress, e);
-    if (typeof eventName === 'string' && eventName !== '' && typeof pressEventListeners[eventName] === 'function') {
-      pressEventListeners[eventName](e);
+    if (typeof id === 'string' && id !== '' && typeof pressEventListeners[id] === 'function') {
+      pressEventListeners[id](e);
     }
   }
 }

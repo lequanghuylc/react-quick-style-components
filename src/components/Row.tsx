@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 
 import { Props as ButtonProps } from './Button';
+import { Props as ColProps } from './Col';
 
 import Col from './Col';
 import Responsive from './Responsive';
 
 export interface Props {
-  onRef?(): void,
+  onRef?(ref: any): void,
+  onLayout?(event: any): any,
   stretch?: boolean,
   responsive?: {
     sm?: string,
@@ -15,17 +17,18 @@ export interface Props {
     xl?: string,
     [breakpoint: string]: string,
   },
+  hasWrapper?: boolean,
   [key: string]: any,
 }
 
-export default class Row extends Component<Props & ButtonProps> {
+export default class Row extends Component<Props & ColProps & ButtonProps> {
 
   state = {
     responsiveRule: '',
   }
 
   render() {
-    const { stretch, responsive, children } = this.props;
+    const { stretch, responsive, children, onRef, id, hasWrapper } = this.props;
     const { responsiveRule } = this.state;
     
     return (
@@ -34,10 +37,10 @@ export default class Row extends Component<Props & ButtonProps> {
         alignItems={stretch ? "stretch" : "center"}
         {...this.props}
         flexWrap={responsiveRule.includes('%') ? 'wrap' : undefined}
-        ref={this.props.onRef}
+        ref={onRef}
       >
         {Boolean(!responsive || children === undefined) ? children : (
-          <Responsive rules={responsive} onChange={rule => this.setState({ responsiveRule: rule })}>
+          <Responsive hasWrapper={hasWrapper} rules={responsive} onChange={rule => this.setState({ responsiveRule: rule })}>
             {children}
           </Responsive>
         )}
