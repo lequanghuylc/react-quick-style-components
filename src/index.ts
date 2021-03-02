@@ -1,36 +1,31 @@
-import { globalStyleInstance } from './utils/globalProps';
-import TextComponent from './components/Text';
-import { DefaultFontType } from './components/Text';
+import { globalStyleInstance, IObjectStyle, IStyleHooks } from './utils/globalProps';
+import TextComponent, { TDefaultFont } from './components/Text';
 
-export { _s, styleSet, propsToStyle } from './utils/globalProps';
-export { commonStyle } from './utils/commonStyle';
-
-export { default as Text } from './components/Text';
 export { default as Button } from './components/Button';
 export { default as Col } from './components/Col';
 export { default as Row } from './components/Row';
-export { ResponsiveViewport } from './components/Responsive';
-export { default as Input } from './components/Input';
+export { default as Text } from './components/Text';
 export { default as Scroll } from './components/Scroll';
+export { default as Input } from './components/Input';
 export { default as Img } from './components/Img';
-export { Container, ContainerJSON } from './components/containers';
-export { Element, ElementJSON } from './components/elements';
-export { Parser, genComponentJSON, storeImport } from './components/parser';
-export { default as cQuery, withCQuery, ButtonQuery, TextQuery } from './utils/CQuery';
+export { default as Parser } from './utils/parser/ParserReactComponent';
+export { ResponsiveViewport } from './components/hooks/useResponsiveStyle';
+export { default as CQuery,  withCQuery, ButtonQuery, TextQuery } from './utils/CQuery';
+export { HeaderNavigation } from './nav';
 
 const setMainColor = (mainColor : string) => {
   globalStyleInstance.setMainColor(mainColor);
 }
 
-const setAdditionStyles = (styles) => {
+const setAdditionStyles = (styles : IObjectStyle) => {
   globalStyleInstance.setAdditionStyles(styles);
 }
 
-const setFontStyle = (fontObject : DefaultFontType) => {
-  TextComponent.setFontFamily(fontObject);
+const setFontStyle = (fontObject : TDefaultFont) => {
+  TextComponent.setFontStyle(fontObject);
 }
 
-const setStyleHooks = (hooks) => {
+const setStyleHooks = (hooks : IStyleHooks) => {
   globalStyleInstance.setStyleHooks(hooks);
 }
 

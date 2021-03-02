@@ -1,8 +1,13 @@
 import {
-  StyleSheet, Platform
+  StyleSheet, Platform,
+  TextStyle, ViewStyle,ImageStyle,
 } from 'react-native';
 
-const styles : any = {
+interface ICommonStyle {
+  [styleName : string]: TextStyle & ViewStyle & ImageStyle,
+}
+
+const styles : ICommonStyle = {
   bgWhite: {
     backgroundColor: '#ffffff',
   },
@@ -46,4 +51,4 @@ const styles : any = {
   }
 };
 
-export const commonStyle : any = Platform.OS === 'web' ? styles : StyleSheet.create({ ...styles });
+export const commonStyle : ICommonStyle = Platform.OS === 'web' ? styles : StyleSheet.create({ ...styles });

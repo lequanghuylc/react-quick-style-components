@@ -1,15 +1,13 @@
-import React, { Component } from 'react';
+import React, { useRef, RefCallback } from 'react';
 import {
   ScrollView,
-  StyleSheet,
   Platform,
   ScrollViewProps,
-  Dimensions,
 } from 'react-native';
 
-import { ResponsiveContext, getResponsiveRule } from './Responsive';
+import { usePropsStyle, useHoverStyle, useResponsiveStyle } from './hooks';
 
-export interface Props {
+interface IScroll {
   onRef?(ref: any): void,
   onLayout?(event: any): any,
   horizontal?: boolean,
@@ -54,71 +52,43 @@ export interface Props {
   document.head.append(style);
 })();
 
-export default class Scroll extends Component<Props> {
-
-  static contextType = ResponsiveContext;
-
-  state = {
-    responsiveStyle: {},
+const Scroll = (props : IScroll) => {
+  const { horizontal, children, onHoverStyle, onResponsiveStyle, showIndicator, scrollViewProps, onScroll } = props;
+  const style = usePropsStyle(props);
+  const compRef = useRef(null);
+  const onRef : RefCallback<any> = (ref) => {
+    compRef.current = ref;
+    if (props.onRef) props.onRef(ref);
   }
+  const useNativeStyleProps = props.useNativeStyleProps === false ? false : true; // default is true
+  const [hoverProps, combinedStyle] = useHoverStyle(onHoverStyle, useNativeStyleProps, style, compRef);
+  const responsiveStyle = useResponsiveStyle(onResponsiveStyle);
 
-  root;
+  const defaultShowIndicator = showIndicator !== undefined ? showIndicator : Platform.select({
+    ios: false,
+    android: false,
+    web: true,
+  });
+  const scrollIndicatorProps = horizontal ? {
+    showsHorizontalScrollIndicator: defaultShowIndicator,
+  } : {
+    showsVerticalScrollIndicator: defaultShowIndicator,
+  };
 
-  onRef = (componentRef) => {
-    const { onRef } = this.props;
-    this.root = componentRef;
-    !!onRef && onRef(componentRef);
-  }
+  return (
+    <ScrollView
+      ref={onRef}
+      horizontal={horizontal}
+      {...scrollIndicatorProps}
+      {...hoverProps}
+      contentContainerStyle={[combinedStyle, responsiveStyle]}
+      keyboardShouldPersistTaps="always"
+      onScroll={onScroll}
+      {...scrollViewProps}
+    >
+      {children}
+    </ScrollView>
+  );
+};
 
-  componentDidMount() {
-    const { onResponsiveStyle } = this.props;
-    if (!onResponsiveStyle) return;
-    Dimensions.addEventListener('change', this.handleDimensionsChange);
-    this.handleDimensionsChange();
-  }
-
-  componentWillUnmount() {
-    Dimensions.removeEventListener('change', this.handleDimensionsChange);
-  }
-
-  handleDimensionsChange = () => {
-    const { onResponsiveStyle } = this.props;
-    const viewportWidth = this.context.useCustomViewport ? this.context.width : Dimensions.get('window').width; 
-    const responsiveStyle = getResponsiveRule(viewportWidth, onResponsiveStyle);
-    // console.log('responsiveStyle', responsiveStyle);
-    this.setState({ responsiveStyle });
-  }
-
-  render() {
-    const { responsiveStyle } = this.state;
-    const { style, onScroll, showIndicator, horizontal, scrollViewProps, children, onLayout } = this.props;
-    const defaultShowIndicator = showIndicator !== undefined ? showIndicator : Platform.select({
-      ios: false,
-      android: false,
-      web: true,
-    });
-    const scrollIndicatorProps = horizontal ? {
-      showsHorizontalScrollIndicator: defaultShowIndicator,
-    } : {
-        showsVerticalScrollIndicator: defaultShowIndicator,
-      };
-    return (
-      <ScrollView
-        ref={this.onRef}
-        onLayout={onLayout}
-        horizontal={horizontal}
-        {...scrollIndicatorProps}
-        contentContainerStyle={[style, responsiveStyle]}
-        keyboardShouldPersistTaps="always"
-        onScroll={onScroll}
-        {...scrollViewProps}
-      >
-        {children}
-      </ScrollView>
-    )
-  }
-}
-
-const styles = StyleSheet.create({
-
-})
+export default Scroll;

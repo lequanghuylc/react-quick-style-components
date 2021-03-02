@@ -1,6 +1,6 @@
 {
   "name": "react-quick-style-components",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "description": "Quickly style react-native and reactjs components via props",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -14,6 +14,7 @@
   "dependencies": {},
   "repository": "https://github.com/lequanghuylc/react-quick-style-components",
   "devDependencies": {
+    "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.14",
     "@types/react": "^17.0.0",
     "@types/react-native": "^0.63.42"

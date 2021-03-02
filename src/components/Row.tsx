@@ -1,50 +1,37 @@
-import React, { Component } from 'react';
-
-import { Props as ButtonProps } from './Button';
-import { Props as ColProps } from './Col';
-
-import Col from './Col';
+import React from 'react';
+import { useResponsiveStyle, IResponsiveLayoutProps, getResponsiveLayout } from './hooks';
+import Col, { IColProps } from './Col';
 import Responsive from './Responsive';
 
-export interface Props {
+export interface IRowProps extends IColProps, IResponsiveLayoutProps {
   onRef?(ref: any): void,
   onLayout?(event: any): any,
   stretch?: boolean,
-  responsive?: {
-    sm?: string,
-    md?: string,
-    lg?: string,
-    xl?: string,
-    [breakpoint: string]: string,
-  },
   hasWrapper?: boolean,
+  children?: any,
   [key: string]: any,
 }
 
-export default class Row extends Component<Props & ColProps & ButtonProps> {
+const Row = (props : IRowProps) => {
+  const { stretch, children, onRef, hasWrapper } = props;
+  const responsiveLayout = getResponsiveLayout(props);
+  const responsiveRule = useResponsiveStyle(responsiveLayout);
 
-  state = {
-    responsiveRule: '',
-  }
+  return (
+    <Col
+      flexDirection="row"
+      alignItems={stretch ? "stretch" : "center"}
+      {...props}
+      flexWrap={!!responsiveRule && responsiveRule.includes('%') ? 'wrap' : undefined}
+      ref={onRef}
+    >
+      {Boolean(!responsiveLayout || children === undefined) ? children : (
+        <Responsive hasWrapper={hasWrapper} rules={responsiveLayout}>
+          {children}
+        </Responsive>
+      )}
+    </Col>
+  );
+};
 
-  render() {
-    const { stretch, responsive, children, onRef, id, hasWrapper } = this.props;
-    const { responsiveRule } = this.state;
-    
-    return (
-      <Col
-        flexDirection="row"
-        alignItems={stretch ? "stretch" : "center"}
-        {...this.props}
-        flexWrap={responsiveRule.includes('%') ? 'wrap' : undefined}
-        ref={onRef}
-      >
-        {Boolean(!responsive || children === undefined) ? children : (
-          <Responsive hasWrapper={hasWrapper} rules={responsive} onChange={rule => this.setState({ responsiveRule: rule })}>
-            {children}
-          </Responsive>
-        )}
-      </Col>
-    );
-  }
-}
+export default Row;

@@ -1,115 +1,71 @@
-import React, { Component, createRef,  } from 'react';
+import React, { useRef, RefCallback } from 'react';
 import {
-  View, StyleSheet, Dimensions
+  View,
 } from 'react-native';
-import Button from './Button';
-import { propsToStyle } from '../utils/globalProps';
-import { Props as ButtonProps } from './Button';
+import { usePropsStyle, useHoverStyle, useResponsiveStyle, HoverContext } from './hooks';
+import Button, { IButtonProps } from './Button';
 
-import { ResponsiveContext, getResponsiveRule } from './Responsive';
-
-export interface Props {
+export interface IColProps extends IButtonProps {
   onRef?(ref: any): void,
   onHoverStyle?: any,
+  useNativeStyleProps?: boolean,
+  useNestedHover?: boolean,
   onResponsiveStyle?: {
+    xs?: any,
     sm?: any,
     md?: any,
     lg?: any,
     xl?: any,
     [breakpoint: string]: any,
   },
-  useNativeStyleProps?: boolean,
   style?: any,
   btn?: boolean,
   [key: string]: any,
 }
 
-export default class Col extends Component<Props & ButtonProps> {
+const Col = (props :  IColProps) => {
+  const { btn, onPress, onHoverStyle, onResponsiveStyle, useNestedHover } = props;
+  const style = usePropsStyle(props);
 
-  static getDerivedStateFromProps(props) {
-    const newStyle = [
-      propsToStyle(props),
-      props.style,
-    ];
-    return { propStyle: newStyle };
+  const compRef = useRef(null);
+  const onRef : RefCallback<any> = (ref) => {
+    compRef.current = ref;
+    if (props.onRef) props.onRef(ref);
   }
+  const useNativeStyleProps = props.useNativeStyleProps === false ? false : true; // default is true
+  const [hoverProps, combinedStyle, isHovered] = useHoverStyle(onHoverStyle, useNestedHover ? false : useNativeStyleProps, style, compRef);
+  const responsiveStyle = useResponsiveStyle(onResponsiveStyle);
 
-  static contextType = ResponsiveContext;
-
-  state = {
-    propStyle: {},
-    additionStyle: {},
-    responsiveStyle: {},
-  }
-
-  root;
-
-  onRef = (componentRef) => {
-    const { onRef } = this.props;
-    this.root = componentRef;
-    !!onRef && onRef(componentRef);
-  }
-
-  setStyles = (additionStyle) => {
-    const { useNativeStyleProps } = this.props;
-    const { propStyle, responsiveStyle } = this.state;
-    // @ts-ignore
-    const root : any = this.root;
-    if (useNativeStyleProps && !!root) {
-      root.setNativeProps({
-        style: [propStyle, additionStyle, responsiveStyle],
-      })
-    } else {
-      this.setState({ additionStyle })
+  const renderWithWrapper = (children : any) => {
+    if (useNestedHover) {
+      return (
+        <HoverContext.Provider value={{ isHovered, useHoverContext: useNestedHover }}>
+          {children}
+        </HoverContext.Provider>
+      );
     }
-    
-  }
+    return children;
+  };
 
-  componentDidMount() {
-    const { onResponsiveStyle } = this.props;
-    if (!onResponsiveStyle) return;
-    Dimensions.addEventListener('change', this.handleDimensionsChange);
-    this.handleDimensionsChange();
-  }
+  const mainContent = Boolean(typeof onPress === 'function' || btn) ? (
+    <Button
+      onRef={onRef}
+      onPress={onPress}
+      activeOpacity={0.9}
+      {...hoverProps}
+      {...props}
+      style={[combinedStyle, responsiveStyle]}
+    />
+  ) : (
+    <View
+      ref={onRef}
+      {...hoverProps}
+      {...props}
+      style={[combinedStyle, responsiveStyle]}
+    />
+  );
 
-  componentWillUnmount() {
-    Dimensions.removeEventListener('change', this.handleDimensionsChange);
-  }
+  return renderWithWrapper(mainContent);
+};
 
-  handleDimensionsChange = () => {
-    const { onResponsiveStyle } = this.props;
-    const viewportWidth = this.context.useCustomViewport ? this.context.width : Dimensions.get('window').width; 
-    const responsiveStyle = getResponsiveRule(viewportWidth, onResponsiveStyle);
-    // console.log('responsiveStyle', responsiveStyle);
-    this.setState({ responsiveStyle });
-  }
-
-  render() {
-    const { onPress, btn, onHoverStyle } = this.props;
-    const { propStyle, additionStyle, responsiveStyle } = this.state;
-
-    const hoverProps = !onHoverStyle ? {} : {
-      onMouseEnter: () => this.setStyles(onHoverStyle),
-      onMouseLeave: () => this.setStyles(undefined),
-    };
-    
-    return Boolean(typeof onPress === 'function' || btn) ? (
-      <Button
-        onRef={this.onRef}
-        onPress={onPress}
-        activeOpacity={0.9}
-        {...this.props}
-        {...hoverProps}
-        style={[propStyle, additionStyle, responsiveStyle]}
-      />
-    ) : (
-      <View
-        ref={this.onRef}
-        {...this.props}
-        // @ts-ignore
-        {...hoverProps}
-        style={[propStyle, additionStyle, responsiveStyle]}
-      />
-    );
-  }
-}
+export default Col;

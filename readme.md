@@ -2,6 +2,11 @@
 
 Quickly style react-native (and reactjs) components  via props
 
+# Example
+
+- [View it on Expo](https://expo.io/@lequanghuylc/projects/react-quick-style-components)
+
+
 # Contents
 
 - [Installation](#installation)

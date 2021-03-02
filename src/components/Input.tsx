@@ -1,25 +1,56 @@
-import React, { Component } from 'react';
+import React, { RefCallback, useRef, useState, useEffect, useMemo, RefObject } from 'react';
 import {
   TextInput,
-  StyleSheet,
-  Platform,
   TextInputProps,
+  Platform,
+  View,
 } from 'react-native';
 
-import { defaultFont } from './Text';
+import Text from './Text';
 
-export interface Props {
+type TReactComponent = any; // TODO: use proper type
+
+import { usePropsStyle, useHoverStyle, useResponsiveStyle } from './hooks';
+
+export interface ITextInputProps {
   id?: string,
   onRef?(ref: any): void,
   value?: any,
   onChange?(newValue : any): any,
   multiLines?: boolean,
   placeholder?: string,
+  placeholderColor?: string,
   style?: any,
   onSubmitEditing?(): any,
   onEnter?(): any,
   inputProps?: TextInputProps,
+  onHoverStyle?: any,
+  useNativeStyleProps?: boolean,
+  onResponsiveStyle?: {
+    xs?: any,
+    sm?: any,
+    md?: any,
+    lg?: any,
+    xl?: any,
+    [breakpoint: string]: any,
+  },
   [key: string]: any,
+}
+
+interface TextInstanceManager {
+  get(): string,
+  set(newValue: string): void,
+  focus(): void,
+  isFocused(): boolean,
+  blur(): void,
+}
+
+interface IInput {
+  (props : ITextInputProps): TReactComponent,
+  query(id: string): null | TextInstanceManager,
+  instances: {
+    [componentId : string]: TextInstanceManager,
+  }
 }
 
 (() => {
@@ -29,118 +60,72 @@ export interface Props {
 	document.head.append(style);
 })();
 
-
-
-interface TextInstanceManager {
-  [id: string]: {
-    getValue(): string,
-    setValue(newValue: string): void,
-    onChange(newValue: string): void,
-    focus(): void,
-    val: any,
-  },
-}
-
-const textInstances : TextInstanceManager = {};
-
-export default class Input extends Component<Props> {
-
-  static query = (id) => textInstances[id];
-
-  state = {
-    value: this.props.value || '',
-    forceUseValueState: false,
+const Input : IInput = (props) => {
+  const { placeholder, multiLines, onSubmitEditing, onEnter, inputProps, onHoverStyle, onResponsiveStyle, placeholderColor } = props;
+  // the main idea here is to get this component to work with/without value & onChange props
+  const [value, setValue] = useState(props.value);
+  const style = usePropsStyle(props);
+  const compRef = useRef<TextInput>();
+  const onRef : RefCallback<TextInput> = (ref) => {
+    if (!ref) return;
+    compRef.current = ref;
+    if (props.onRef) props.onRef(ref);
   }
+  const useNativeStyleProps = props.useNativeStyleProps === false ? false : true; // default is true
+  const [hoverProps, combinedStyle] = useHoverStyle(onHoverStyle, useNativeStyleProps, style, compRef as RefObject<View>);
+  const responsiveStyle = useResponsiveStyle(onResponsiveStyle);
 
-  componentDidMount() {
-    const { id } = this.props;
-    if (!id) return;
-    textInstances[id] = {
-      getValue: () => {
-        return this.getValue();
-      },
-      setValue: (newValue) => {
-        this.setState({
-          value: newValue,
-          forceUseValueState: true,
-        });
-      },
-      focus: () => this.focus(),
-      onChange: this.handleChange,
-      val: undefined,
+  const handleChange = (newText : string) => {
+    if (props.onChange) props.onChange(newText);
+    else setValue(newText);
+  };
+
+  useEffect(() => {
+    setValue(value);
+  }, [props.value]);
+
+  useEffect(() => {
+    if (!props.id) return;
+    Input.instances[props.id] = {
+      get: () => value,
+      set: (newValue) => setValue(newValue),
+      focus: () => !!compRef.current && compRef.current.focus(),
+      isFocused: () => !!compRef.current && compRef.current.isFocused(),
+      blur: () => !!compRef.current && compRef.current.blur(),
     }
-    // just trying to make it jQuery-like, get and set in one function
-    textInstances[id].val = function() {
-      if (arguments.length === 0) return textInstances[id].getValue();
-      textInstances[id].setValue(arguments[0]);
-    }.bind(this);
-  }
-
-  componentWillUnmount() {
-    const { id } = this.props;
-    if (!id) return;
-    delete textInstances[id]; 
-  }
-
-  handleChange = text => {
-    const { onChange } = this.props;
-    const { forceUseValueState } = this.state;
-    if (forceUseValueState || !onChange) {
-      this.setState({ value: text });
-    } else {
-      onChange(text);
+    return () => {
+      if (props.id) delete Input.instances[props.id];
     }
-  }
+  }, [props.id, value])
 
-  getValue = () => {
-    const { onChange } = this.props;
-    const { forceUseValueState } = this.state;
-    const value = forceUseValueState ? this.state.value :
-      !onChange ? this.state.value : this.props.value;
-    return value;
-  }
-
-  focus = () => {
-    this.inputRef.focus();
-  }
-
-  inputRef;
-  onRef = (componentRef) => {
-    const { onRef } = this.props;
-    this.inputRef = componentRef;
-    !!onRef && onRef(componentRef);
-  }
-
-  render() {
-    const { style, placeholder, multiLines, onSubmitEditing, onEnter, inputProps } = this.props;
-    const value = this.getValue();
-    
+  const inputStyle = [Text.defaultFont, combinedStyle, responsiveStyle];
+  
+  return useMemo(() => {
     return (
       <TextInput
         value={String(value)}
         autoCapitalize="none"
-        onChangeText={this.handleChange}
-        style={[multiLines ? styles.textarea : styles.input, defaultFont, style]}
+        onChangeText={handleChange}
         underlineColorAndroid="transparent"
-        placeholderTextColor={'rgba(0,0,0,0.2)'}
+        placeholderTextColor={placeholderColor || Text.defaultFont.color}
         placeholder={placeholder}
-        ref={this.onRef}
+        ref={onRef}
         textAlignVertical="top"
         multiline={multiLines}
         onSubmitEditing={onSubmitEditing || onEnter}
+        {...hoverProps}
         {...inputProps}
+        style={inputStyle}
       />
-    )
-  }
-}
+    );
+    // prevent rerender if props.value changes
+  }, [value, inputStyle, placeholder, placeholderColor, multiLines, onSubmitEditing, onEnter, hoverProps, inputProps]);
+};
 
-const styles = StyleSheet.create({
-  input: {
-    width: '100%',
-    minHeight: 30,
-  },
-  textarea: {
-    width: '100%',
-    minHeight: 100,
-  },
-})
+Input.instances = {};
+
+Input.query = (id) => {
+  return Input.instances[id] || null;
+};
+
+export default Input;

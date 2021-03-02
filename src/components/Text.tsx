@@ -1,142 +1,72 @@
-import React, { Component } from 'react';
+import React, { RefCallback, useRef } from 'react';
 import {
   Text as TextDefault,
 } from 'react-native';
 
-import { propsToStyle } from '../utils/globalProps';
+import { usePropsStyle, useHoverStyle, useResponsiveStyle } from './hooks';
 
-export interface DefaultFontType {
-  fontFamily: string,
-  color: string,
-}
+type TReactComponent = any; // TODO: use proper type
 
-export let defaultFont = {
-  fontFamily: undefined,
-  color: undefined,
+export interface TDefaultFont {
+  fontFamily: string | undefined,
+  color: string | undefined,
 };
 
-export interface Props {
+export interface ITextProps {
   onRef?(ref: any): void,
   center?: boolean,
   text?: string,
   onHoverStyle?: any,
   useNativeStyleProps?: boolean,
+  onResponsiveStyle?: {
+    xs?: any,
+    sm?: any,
+    md?: any,
+    lg?: any,
+    xl?: any,
+    [breakpoint: string]: any,
+  },
   [key: string]: any,
 }
 
-interface TextInstanceManager {
-  [id: string]: {
-    getValue(): string,
-    setValue(newValue: string): void,
-    text: any,
-  },
+interface IText {
+  (props: ITextProps): TReactComponent,
+  defaultFont: TDefaultFont,
+  setFontStyle({ fontFamily, color } : TDefaultFont): void,
 }
 
-const textInstances : TextInstanceManager = {};
-
-export default class Text extends Component<Props> {
-
-  static setFontFamily(fontFamily: DefaultFontType) {
-    defaultFont = fontFamily;
+const Text : IText = (props) => {
+  const { text, children, onHoverStyle, onResponsiveStyle } = props;
+  const style = usePropsStyle(props);
+  const compRef = useRef(null);
+  const onRef : RefCallback<any> = (ref) => {
+    compRef.current = ref;
+    if (props.onRef) props.onRef(ref);
   }
+  const useNativeStyleProps = props.useNativeStyleProps === false ? false : true; // default is true
+  const [hoverProps, combinedStyle] = useHoverStyle(onHoverStyle, useNativeStyleProps, style, compRef);
+  const responsiveStyle = useResponsiveStyle(onResponsiveStyle);
 
-  static query = (id) => textInstances[id];
+  return (
+    <TextDefault
+      ref={onRef}
+      {...hoverProps}
+      {...props}
+      style={[Text.defaultFont, combinedStyle, responsiveStyle]}
+    >
+      {text || children || null}
+    </TextDefault>
+  );
+};
 
-  static getDerivedStateFromProps(props) {
-    const { style, center } = props;
-    const combinedStyle = [
-      defaultFont,
-      center ? { textAlign: 'center' } : {},
-      propsToStyle(props),
-      style,
-    ];
-    return { propStyle: combinedStyle };
-  }
+Text.defaultFont = {
+  fontFamily: undefined,
+  color: undefined,
+};
 
-  state = {
-    text: this.props.text || '',
-    forceUseValueState: false,
-    propStyle: {},
-    additionStyle: {},
-  }
+Text.setFontStyle = ({ fontFamily, color }) => {
+  Text.defaultFont.fontFamily = fontFamily;
+  Text.defaultFont.color = color;
+};
 
-  root;
-
-  onRef = (componentRef) => {
-    const { onRef } = this.props;
-    this.root = componentRef;
-    !!onRef && onRef(componentRef);
-  }
-
-  componentDidMount() {
-    const { id } = this.props;
-    if (!id) return;
-    textInstances[id] = {
-      getValue: () => {
-        return this.getText();
-      },
-      setValue: (newValue) => {
-        this.setState({
-          text: newValue,
-          forceUseValueState: true,
-        });
-      },
-      text: undefined,
-    }
-    // just trying to make it jQuery-like, get and set in one function
-    textInstances[id].text = function() {
-      if (arguments.length === 0) return textInstances[id].getValue();
-      textInstances[id].setValue(arguments[0]);
-    }.bind(this);
-  }
-
-  setStyles = (additionStyle) => {
-    const { useNativeStyleProps } = this.props;
-    const { propStyle } = this.state;
-    // @ts-ignore
-    const root : any = this.root;
-    if (useNativeStyleProps && !!root) {
-      root.setNativeProps({
-        style: [propStyle, additionStyle],
-      })
-    } else {
-      this.setState({ additionStyle })
-    }
-    
-  }
-
-  componentWillUnmount() {
-    const { id } = this.props;
-    if (!id) return;
-    delete textInstances[id]; 
-  }
-
-  getText = () => {
-    const { forceUseValueState } = this.state;
-    const value = forceUseValueState ? this.state.text : this.props.text;
-    return value;
-  }
-
-  render() {
-    const { children, onHoverStyle } = this.props;
-    const text = this.getText();
-    const { propStyle, additionStyle } = this.state;
-
-    const hoverProps = !onHoverStyle ? {} : {
-      onMouseEnter: () => this.setStyles(onHoverStyle),
-      onMouseLeave: () => this.setStyles(undefined),
-    };
-
-    return (
-      <TextDefault
-        {...this.props}
-        ref={this.onRef}
-        style={[propStyle, additionStyle]}
-        {...hoverProps}
-      >
-        {text || children || null}
-      </TextDefault>
-    )
-  }
-}
-
+export default Text;

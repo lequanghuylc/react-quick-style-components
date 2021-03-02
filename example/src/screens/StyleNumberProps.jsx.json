@@ -1,0 +1,3 @@
+{
+  "code": "<Col flex1 padding20>\n\n      <Col height50 width50 marginBottom10 backgroundColor=\"red\" />\n      <Col height50 width50 marginBottom10 backgroundColor=\"green\" />\n      <Col height50 width50 backgroundColor=\"blue\" />\n\n      <Col height1 marginVertical10 backgroundColor=\"rgba(0,0,0,0.1\" />\n    </Col>"
+}
