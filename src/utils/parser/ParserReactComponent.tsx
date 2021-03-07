@@ -17,7 +17,6 @@ interface IParser {
 }
 
 const Parser : IParser = (props) => {
-  console.log('Parser', props);
   let data : IComponentJson;
   try {
     data = ParserJSON.genComponentJSON(props);
