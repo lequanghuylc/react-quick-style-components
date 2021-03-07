@@ -60,7 +60,7 @@ Banks - Allocation approach:
   for example
 
 ```jsx
-  import { HeaderNavigation } from 'react-quick-style-components';
+  import { HeaderNavigation } from 'react-quick-style-components/nav';
 
   <HeaderNavigation
     banks={{

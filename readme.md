@@ -7,6 +7,7 @@
 # Example
 
 - [View it on Expo](https://expo.io/@lequanghuylc/projects/react-quick-style-components)
+- [View it on CodeSandbox](https://codesandbox.io/s/react-quick-style-components-1zons)
 
 
 # Contents
@@ -100,7 +101,7 @@ And with the advantage of boolean prop, we could get it even quicker (in terms o
 
 ```
 import { StyleSheet } from 'react-native';
-import { initQuickStyle } from 'react-quick-style-components/native';
+import { initQuickStyle, Text } from 'react-quick-style-components';
 import { FONT, COLOR } from './some-where/in/your/project'
 
 // Use for quick prop like: colorMain, bgMain.
@@ -109,13 +110,9 @@ initQuickStyle.setMainColor(COLOR.MAIN);
 
 // Use for default text style
 
-initQuickStyle.setFontFamily({
-  family: {
-    regular: FONT.FAMILY.REGULAR,
-    bold: FONT.FAMILY.BOLD,
-    semiBold: FONT.FAMILY.SEMI_BOLD,
-  },
-  color: FONT.COLOR,
+Text.setFontStyle({
+  fontFamily: 'NunitoSans_400Regular',
+  color: '#CCCCCC',
 });
 
 // Use for quick style, e.g: if you pass Style.create({ white: { color: 'white' } }). You will be able to use <Text white>Hello World!</Text>
@@ -141,7 +138,7 @@ initQuickStyle.setAdditionStyles(additionStyles);
 #### Text
 
 ```
-  import { Text } from 'react-quick-style-components/native';
+  import { Text } from 'react-quick-style-components';
 
   const App = () => (
     <Text colorMain bold fontsize20>Hello World!</Text>
@@ -151,7 +148,7 @@ initQuickStyle.setAdditionStyles(additionStyles);
 #### Col
 
 ```
-  import { Col } from 'react-quick-style-components/native';
+  import { Col } from 'react-quick-style-components';
 
   const handlePress = () => alert('Hello World!');
 
@@ -163,7 +160,7 @@ initQuickStyle.setAdditionStyles(additionStyles);
 #### Row
 
 ```
-  import { Col } from 'react-quick-style-components/native';
+  import { Col } from 'react-quick-style-components';
 
   const handlePress = () => alert('Hello World!');
 
