@@ -6,6 +6,8 @@
 
 # Example
 
+![Responsive Example](./responsive_example.png "Responsive Example")
+
 - [View it on Expo](https://expo.io/@lequanghuylc/projects/react-quick-style-components)
 - [View it on CodeSandbox](https://codesandbox.io/s/react-quick-style-components-1zons)
 
