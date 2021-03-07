@@ -1,6 +1,8 @@
 # React Quick Style Components
 
-Quickly style react-native (and reactjs) components  via props
+- Quickly style react-native (and reactjs) components via props.
+- Support hover and responsive style for web and different screen sizes.
+- Responsive layout handling made easy.
 
 # Example
 
@@ -16,9 +18,12 @@ Quickly style react-native (and reactjs) components  via props
 - [Usage](#usage)
 - [Styled Props](#styled-props)
 - [Style Hooks](#style-hooks)
+- [Responsive Styled Props](#responsive-styled-props)
 - [Col Component](#col-component)
-- [Row Component & Responsive](#row-component)
+- [Row Component & Responsive layout](#row-component)
 - [Text Component](#text-component)
+- [Advanced usage](#advanced-usage)
+- [UI Builder Support](#ui-builder-support)
 
 # Installation
 
@@ -219,6 +224,30 @@ initQuickStyle.setStyleHooks({
 
 After that, all of your `<Text fontSize={xyz} />` will go thourgh that function and converted to a new value.
 
+# Responsive Styled Props
+
+Components `Col`, `Row`, `Text`, `Img`, `Scroll`, `Input` all come with responsive style support via prop `onResponsiveStyle`. 
+
+```jsx
+<Col
+  width100
+  height100
+  backgroundColor="black"
+  onResponsiveStyle={{
+    md: {
+      width: 200,
+      height: 200,
+    },
+    lg: {
+      backgroundColor: 'pink',
+    }
+  }}
+
+/>
+
+```
+
+
 # Col Component
 
 - Flex direction `column`
@@ -289,15 +318,57 @@ For example
 
 # Text Component
 
-- define default font family and color with `Text.setFontFamily`
+- define default font family and color with `Text.setFontStyle`
+```jsx
+import { Text, Col } from 'react-quick-style-components';
 
-| Prop | Description |
-|---|---|
-|**`bold`**|Change font to Bold font if that font was declared at `initQuickStyle.setAdditionStyles`|
-|**`semiBold`**|Change font to Semi Bold font if that font was declared at `initQuickStyle.setAdditionStyles`|
-|**`light`**|The same|
-|**`medium`**|The same|
-|**`extraBold`**|The same|
-|**`black`**|The same|
+Text.setFontStyle({
+  fontFamily: 'NunitoSans_400Regular',
+  color: '#CCCCCC',
+});
+```
 
-Example `<Text light bold />`
+If you use `@expo-google-fonts`, there will be a lot of font weights as seperate fonts. We can use `setAdditionStyles` to quickly assign font:
+
+```jsx
+initQuickStyle.setAdditionStyles({
+  light: {
+    fontFamily: 'NunitoSans_300Light'
+  },
+  semiBold: {
+    fontFamily: 'NunitoSans_600SemiBold'
+  },
+  bold: {
+    fontFamily: 'NunitoSans_700Bold'
+  },
+});
+```
+
+Example `<Text light />`
+
+# Advanced Usage
+
+With the help of `react-native-web`, we can use this library on both web and mobile app. Soon we will want to *write once, run anywhere*. But truly cross-platform is hard to achieve. While some UIs can look the same, some layouts can be responsive, there are still many things to cover like navigation, flow, user behaviour. If you use too many ifs for platform check, and the structrure of web and mobile app are different, then it's not *write once* anymore. It's just *write in the same place*
+
+In attempt to make cross-platform coding more convenient, this library introduce some concept like `Banks - Allocation pattern`, `Header Navigation`. Read more about it [here](banks-allocation-pattern.md).
+
+# UI Builder Support
+
+For now it supports render UI from json. The roadmap for this part is to build a UI Builder to around that json parser. Check example in the link at the begining of this readme.
+
+```jsx
+import { Parser } from 'react-quick-style-components';
+
+<Parser
+  {...({
+    id: 'Heading',
+    from: 'Text',
+    style: {
+      fontSize: 25,
+    },
+    props: {
+      text: 'Render react component from JSON'
+    }
+  })}
+/>
+```

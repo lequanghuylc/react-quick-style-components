@@ -61,7 +61,7 @@ const HeaderNavigation = (props : IHeaderNavigationProps) => {
               key={'route-'+val.path+i}
               name={val.name}
             >
-              {(props) => useMemo(() => <Screen {...props} />, [])}
+              {(props) => useMemo(() => <Screen {...props} />, [alloc])}
             </Stack.Screen>
           );
         })}
@@ -83,7 +83,7 @@ const HeaderNavigation = (props : IHeaderNavigationProps) => {
               key={`tab-`+val.name}
               name={val.name}
             >
-              {(props) => useMemo(() =>  <InnerStack {...props} />, [])}
+              {(props) => useMemo(() =>  <InnerStack {...props} />, [alloc])}
             </Tab.Screen>
           )
         })}
@@ -130,7 +130,7 @@ const HeaderNavigation = (props : IHeaderNavigationProps) => {
               key={'stack-'+val.path+i}
               name={val.name}
             >
-              {(props) => useMemo(() => <Screen {...props} />, [])}
+              {(props) => useMemo(() => <Screen {...props} />, [alloc])}
             </Stack.Screen>
           );
         })}
