@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { Col, Row, Text, HeaderNavigation } from '../lib';
+import { Col, Row, Text } from '../lib';
+import { HeaderNavigation } from '../lib/nav';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Link } from '@react-navigation/native';
 
