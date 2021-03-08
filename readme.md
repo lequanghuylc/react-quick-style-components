@@ -8,7 +8,8 @@
 
 ![Responsive Example](./responsive_example.png "Responsive Example")
 
-- [View it on Expo](https://expo.io/@lequanghuylc/projects/react-quick-style-components)
+- [View it on Expo Snacks](https://snack.expo.io/@lequanghuylc/react-quick-style-components-example)
+- [View it on Expo Project](https://expo.io/@lequanghuylc/projects/react-quick-style-components)
 - [View it on CodeSandbox](https://codesandbox.io/s/react-quick-style-components-1zons)
 
 
