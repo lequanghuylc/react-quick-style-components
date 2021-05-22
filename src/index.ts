@@ -9,7 +9,7 @@ export { default as Scroll } from './components/Scroll';
 export { default as Input } from './components/Input';
 export { default as Img } from './components/Img';
 export { default as Parser } from './utils/parser/ParserReactComponent';
-export { ResponsiveViewport, useResponsiveStyle } from './components/hooks/useResponsiveStyle';
+export { ResponsiveViewport, useResponsiveStyle, useDynamicResponsiveValue } from './components/hooks/useResponsiveStyle';
 export { default as CQuery,  withCQuery, ButtonQuery, TextQuery } from './utils/CQuery';
 
 const setMainColor = (mainColor : string) => {
