@@ -128,7 +128,8 @@ export const useDynamicResponsiveValue = () => {
     // example: breakpoint = 'md';  ({ xs: 100, lg: 200 }) =>  100 (use xs value)
     const orderIndex = order.indexOf(breakpoint);
     for (let i=orderIndex; i>=0; i--) {
-      if (dynamicObj[order[i]]) {
+      // even the value is undefine, if the property exists in dynamicObj, use the value
+      if (order[i] in dynamicObj) {
         return dynamicObj[order[i]];
       }
     }
