@@ -98,8 +98,10 @@ export const propsToStyle = (props : IProps = {}) => {
       if (matchArr != null && matchArr.length === 1 && key.indexOf(matchArr[0]) === key.length - matchArr[0].length) {
         const numberValue = Number(matchArr[0]);
         const propertyValue = key.substring(0, key.indexOf(matchArr[0]));
-        const styleObject = { [propertyValue]: styleHooks(propertyValue  as TStyleProperty, numberValue) };
-        style = (<any>Object).assign(style, styleObject);
+        if (styleProperties.includes(propertyValue as TStyleProperty)) {
+          const styleObject = { [propertyValue]: styleHooks(propertyValue  as TStyleProperty, numberValue) };
+          style = (<any>Object).assign(style, styleObject);
+        }
       }
     }
   }
