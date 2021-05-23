@@ -41,11 +41,11 @@ const Responsive = (props : IResponsiveProps) => {
     break;
     case (responsiveRule.includes(':')):
       const flexs = responsiveRule.split(':').map(val => val);
-      if (flexs.filter(val => isNaN(Number(val)) && val !== 'any').length > 0) {
+      if (flexs.filter(val => isNaN(Number(val)) && val !== 'any' && !val.includes('px')).length > 0) {
         throw new Error('invalid responsive rule');
       }
       return flexs.map((val, i) => (
-        <Col flex={val === 'any' ? undefined : val} key={"responsive-r3-"+i+uniqueId}>{childrenArray[i]}</Col>
+        <Col flex={val === 'any' || val.includes('px') ? undefined : val} width={val.includes('px') ? Number(val.replace('px', '')) : undefined} key={"responsive-r3-"+i+uniqueId}>{childrenArray[i]}</Col>
       ));
     break;
     default: return children;
