@@ -11,6 +11,7 @@ export { default as Img } from './components/Img';
 export { default as Parser } from './utils/parser/ParserReactComponent';
 export { ResponsiveViewport, useResponsiveStyle, useDynamicResponsiveValue } from './components/hooks/useResponsiveStyle';
 export { default as CQuery,  withCQuery, ButtonQuery, TextQuery } from './utils/CQuery';
+export { usePropsStyle } from './components/hooks';
 
 const setMainColor = (mainColor : string) => {
   globalStyleInstance.setMainColor(mainColor);
