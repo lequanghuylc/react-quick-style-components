@@ -81,7 +81,7 @@ const Input : IInput = (props) => {
   };
 
   useEffect(() => {
-    setValue(value);
+    setValue(props.value);
   }, [props.value]);
 
   useEffect(() => {
