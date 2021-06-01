@@ -99,7 +99,7 @@ export const propsToStyle = (props : IProps = {}) => {
         const numberValue = Number(matchArr[0]);
         const propertyValue = key.substring(0, key.indexOf(matchArr[0]));
         if (styleProperties.includes(propertyValue as TStyleProperty)) {
-          const styleObject = { [propertyValue]: styleHooks(propertyValue  as TStyleProperty, numberValue) };
+          const styleObject = { [propertyValue]: styleHooks(propertyValue as TStyleProperty, numberValue) };
           style = (<any>Object).assign(style, styleObject);
         }
       }
@@ -108,6 +108,10 @@ export const propsToStyle = (props : IProps = {}) => {
   for (let key in commonStyleSheet()) {
     if (!!props[key]) {
       style = (<any>Object).assign(style, commonStyleSheet()[key]);
+      // make common style works with styleHooks
+      for (let property in style) {
+        style[property] = styleHooks(property as TStyleProperty, style[property])
+      }
     }
   }
   return style;
