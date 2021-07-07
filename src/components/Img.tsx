@@ -49,7 +49,7 @@ const Img = (props : IImgProps) => {
   if (err) {
     return (
       <Col middle backgroundColor="rgba(0,0,0,0.2)" style={[combinedStyle, responsiveStyle]}>
-        <Text color="black">Image error!</Text>
+        <Img.ImageError />
       </Col>
     )
   }
@@ -67,5 +67,7 @@ const Img = (props : IImgProps) => {
     />
   )
 }
+
+Img.ImageError = () => <Text color="black" textAlign="center">Image error!</Text>
 
 export default Img;
