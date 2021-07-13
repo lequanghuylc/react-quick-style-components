@@ -144,7 +144,7 @@ initQuickStyle.setAdditionStyles(additionStyles);
   import { Text } from 'react-quick-style-components';
 
   const App = () => (
-    <Text colorMain bold fontsize20>Hello World!</Text>
+    <Text colorMain bold fontSize20>Hello World!</Text>
   )
 ```
 
@@ -278,11 +278,13 @@ Example:
 export interface Props {
   onRef?(): void,
   stretch?: boolean,
-  responsive?: {
+  responsiveLayout?: {
     sm?: string,
     md?: string,
     lg?: string,
     xl?: string,
+    xxl?: string,
+    xxxl?: string,
     [breakpoint: string]: string,
   },
   [key: string]: any,
@@ -292,7 +294,7 @@ export interface Props {
 For example
 
 ```jsx
-<Row responsive={{ xs: '100%', sm: '1:1:2', md: '1:2:1' }}>
+<Row responsiveLayout={{ xs: '100%', sm: '1:1:2', md: '1:2:1' }}>
   <Col width100p height100>
     <Col margin10 flex1 backgroundColor="black" />
   </Col>

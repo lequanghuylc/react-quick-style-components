@@ -17,6 +17,7 @@ export interface IResponsiveLayoutProps {
     lg?: string | undefined,
     xl?: string | undefined,
     xxl?: string | undefined,
+    xxxl?: string | undefined,
     [breakpoint: string]: string | undefined,
   },
   xs?: string | undefined,
@@ -25,18 +26,20 @@ export interface IResponsiveLayoutProps {
   lg?: string | undefined,
   xl?: string | undefined,
   xxl?: string | undefined,
+  xxxl?: string | undefined,
 }
 
 export const getResponsiveLayout = ( props : IResponsiveLayoutProps ) => {
-  const { responsiveLayout, xs, sm, md, lg, xl, xxl } = props;
+  const { responsiveLayout, xs, sm, md, lg, xl, xxl, xxxl } = props;
   if (!!responsiveLayout) return responsiveLayout;
-  const shortObj = { xs, sm, md, lg, xl, xxl };
+  const shortObj = { xs, sm, md, lg, xl, xxl, xxxl };
   if (typeof shortObj.xs === 'undefined') delete shortObj.xs;
   if (typeof shortObj.sm  === 'undefined') delete shortObj.sm;
   if (typeof shortObj.md  === 'undefined') delete shortObj.md;
   if (typeof shortObj.lg  === 'undefined') delete shortObj.lg;
   if (typeof shortObj.xl  === 'undefined') delete shortObj.xl;
   if (typeof shortObj.xxl  === 'undefined') delete shortObj.xxl;
+  if (typeof shortObj.xxxl  === 'undefined') delete shortObj.xxxl;
   return Object.keys(shortObj).length > 0 ? shortObj : undefined;
 }
 
@@ -65,6 +68,7 @@ interface IResponsiveRule<T> {
   lg?: T | undefined,
   xl?: T | undefined,
   xxl?: T | undefined,
+  xxxl?: T | undefined,
   [breakpoint: string]: T | undefined,
 }
 
@@ -79,7 +83,8 @@ export const getResponsiveRule : GetResponsiveRule<any> = (viewportWidth, rules)
       md: 768,
       lg: 992,
       xl: 1200,
-      xxl: 1400,
+      xxl: 1380,
+      xxxl: 1560,
     };
     for (let customBreakpoint in rules) {
       if (typeof minWidthBreakpoints[customBreakpoint] === 'number') continue;
@@ -113,7 +118,7 @@ export const getResponsiveRule : GetResponsiveRule<any> = (viewportWidth, rules)
 }
 
 export const useDynamicResponsiveValue = () => {
-  const order = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
+  const order = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'];
   const breakpoint = useResponsiveStyle({
     xs: 'xs',
     sm: 'sm',
@@ -121,6 +126,7 @@ export const useDynamicResponsiveValue = () => {
     lg: 'lg',
     xl: 'xl',
     xxl: 'xxl',
+    xxxl: 'xxxl',
   });
   return (dynamicObj : IResponsiveRule<any>) => {
     // if the breakpoint value is defined, use that value

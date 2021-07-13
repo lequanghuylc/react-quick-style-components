@@ -1,4 +1,4 @@
-import React, { RefCallback, useRef, useState } from 'react';
+import React, { RefCallback, useEffect, useRef, useState } from 'react';
 import {
   Image,
   ImageSourcePropType,
@@ -45,6 +45,10 @@ const Img = (props : IImgProps) => {
   const onSuccess = () => {
     if (!err) setErr(false);
   }
+
+  useEffect(() => {
+    setErr(false);
+  }, [source]);
 
   if (err) {
     return (
