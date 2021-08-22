@@ -1,9 +1,10 @@
 import React from 'react';
+import { ViewStyle } from 'react-native';
 import { useResponsiveStyle, IResponsiveLayoutProps, getResponsiveLayout } from './hooks';
 import Col, { IColProps } from './Col';
 import Responsive from './Responsive';
 
-export interface IRowProps extends IColProps, IResponsiveLayoutProps {
+export interface IRowProps extends IColProps, IResponsiveLayoutProps, ViewStyle {
   onRef?(ref: any): void,
   onLayout?(event: any): any,
   stretch?: boolean,

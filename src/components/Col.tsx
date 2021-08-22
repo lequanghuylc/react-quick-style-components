@@ -1,11 +1,12 @@
 import React, { useRef, RefCallback } from 'react';
 import {
   View,
+  ViewStyle,
 } from 'react-native';
 import { usePropsStyle, useHoverStyle, useResponsiveStyle, HoverContext } from './hooks';
 import Button, { IButtonProps } from './Button';
 
-export interface IColProps extends IButtonProps {
+export interface IColProps extends IButtonProps, ViewStyle {
   onRef?(ref: any): void,
   onHoverStyle?: any,
   useNativeStyleProps?: boolean,

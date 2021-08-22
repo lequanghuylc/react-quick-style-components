@@ -1,6 +1,7 @@
 import React, { RefCallback, useRef } from 'react';
 import {
   Text as TextDefault,
+  TextStyle,
 } from 'react-native';
 
 import { usePropsStyle, useHoverStyle, useResponsiveStyle } from './hooks';
@@ -12,7 +13,7 @@ export interface TDefaultFont {
   color: string | undefined,
 };
 
-export interface ITextProps {
+export interface ITextProps extends TextStyle {
   onRef?(ref: any): void,
   center?: boolean,
   text?: string,

@@ -3,13 +3,14 @@ import {
   Image,
   ImageSourcePropType,
   ImageProps,
+  ImageStyle,
 } from 'react-native';
 
 import { usePropsStyle, useHoverStyle, useResponsiveStyle } from './hooks';
 import Col from './Col';
 import Text from './Text';
 
-interface IImgProps {
+interface IImgProps extends ImageStyle {
   onRef?(ref: any): void,
   onHoverStyle?: any,
   useNativeStyleProps?: boolean,
