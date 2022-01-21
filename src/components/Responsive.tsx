@@ -21,6 +21,7 @@ const Responsive = (props : IResponsiveProps) => {
   if (!rules) return children;
 
   const responsiveRule : string = useResponsiveStyle(rules);
+  // console.log('responsiveRule', responsiveRule, rules);
   const childrenArray = React.Children.toArray(props.hasWrapper ? children?.props?.children : children);
 
   switch(true) {

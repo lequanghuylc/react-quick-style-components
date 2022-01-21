@@ -43,9 +43,6 @@ const Img = (props : IImgProps) => {
   const responsiveStyle = useResponsiveStyle(onResponsiveStyle);
 
   const onError = () => setErr(true);
-  const onSuccess = () => {
-    if (!err) setErr(false);
-  }
 
   useEffect(() => {
     setErr(false);
@@ -65,7 +62,6 @@ const Img = (props : IImgProps) => {
       resizeMode={resizeMode}
       source={source}
       onError={onError}
-      onLoad={onSuccess}
       {...imageProps}
       {...hoverProps}
       style={[combinedStyle, responsiveStyle]}

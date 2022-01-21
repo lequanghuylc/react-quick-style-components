@@ -6,6 +6,7 @@ import {
   ImageStyle,
   useWindowDimensions,
 } from 'react-native';
+import { IResponsiveRule, getResponsiveRule, useWindowWidthBreakpoint } from './useWindowWidthBreakpoint';
 
 type TOneStyle = TextStyle & ViewStyle & ImageStyle & any;
 
@@ -61,73 +62,18 @@ export const ResponsiveViewport = ({ width, children } : IResponsiveViewportProp
   )
 }
 
-interface IResponsiveRule<T> {
-  xs?: T | undefined,
-  sm?: T | undefined,
-  md?: T | undefined,
-  lg?: T | undefined,
-  xl?: T | undefined,
-  xxl?: T | undefined,
-  xxxl?: T | undefined,
-  [breakpoint: string]: T | undefined,
-}
-
-interface GetResponsiveRule<T> {
-  (viewportWidth : number, rules : IResponsiveRule<T>): T
-}
-
-export const getResponsiveRule : GetResponsiveRule<any> = (viewportWidth, rules) => {
-    const minWidthBreakpoints : IResponsiveRule<number> = {
-      xs: 0,
-      sm: 576,
-      md: 768,
-      lg: 992,
-      xl: 1200,
-      xxl: 1380,
-      xxxl: 1560,
-    };
-    for (let customBreakpoint in rules) {
-      if (typeof minWidthBreakpoints[customBreakpoint] === 'number') continue;
-      if (!customBreakpoint.includes('px')) continue; // skip invalid breakpoint
-      const breakpointWidth = +customBreakpoint.replace('px', '');
-      if (isNaN(breakpointWidth)) continue; // skip invalid breakpoint
-      minWidthBreakpoints[customBreakpoint] = breakpointWidth;
-    }
-
-    const breakpoints = Object.keys(minWidthBreakpoints).sort((a, b) => {
-      const widthA = minWidthBreakpoints[a];
-      if (typeof widthA !== 'number') return 1;
-      const widthB = minWidthBreakpoints[b];
-      if (typeof widthB !== 'number') return 1;
-      return widthA > widthB ? -1 : 1;
-    });
-
-    let currentBreakpoint = 'xs';
-    for (let i=0; i<= breakpoints.length; i++) {
-      const breakpointCode = breakpoints[i];
-      const compareWidth = minWidthBreakpoints[breakpointCode];
-      if (typeof compareWidth !== 'number') continue;
-      if (viewportWidth >= compareWidth) {
-        currentBreakpoint = breakpointCode;
-        if (!rules[breakpointCode]) continue;
-        break;
-      }
-    }
-    const responsiveRule = rules[currentBreakpoint];
-    return responsiveRule;
-}
-
 export const useDynamicResponsiveValue = () => {
   const order = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'];
-  const breakpoint = useResponsiveStyle({
-    xs: 'xs',
-    sm: 'sm',
-    md: 'md',
-    lg: 'lg',
-    xl: 'xl',
-    xxl: 'xxl',
-    xxxl: 'xxxl',
-  });
+  // const breakpoint = useResponsiveStyle({
+  //   xs: 'xs',
+  //   sm: 'sm',
+  //   md: 'md',
+  //   lg: 'lg',
+  //   xl: 'xl',
+  //   xxl: 'xxl',
+  //   xxxl: 'xxxl',
+  // });
+  const breakpoint = useWindowWidthBreakpoint();
   return (dynamicObj : IResponsiveRule<any>) => {
     // if the breakpoint value is defined, use that value
     // if not, use value of breakpoint right before
@@ -143,20 +89,37 @@ export const useDynamicResponsiveValue = () => {
   };
 };
 
+const bpOrder = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'];
+const findNearestLowerBreakpointValue = (breakpoint : string, rules : TOneStyle | string ) => {
+  if (rules[breakpoint]) return rules[breakpoint];
+  const index = bpOrder.indexOf(breakpoint);
+  let i = index;
+  while (!rules[bpOrder[i]]) {
+    if (i === 0) return undefined;
+    i -= 1;
+  }
+  return rules[bpOrder[i]];
+}
+
 export const useResponsiveStyle = (onResponsiveStyle : TOneStyle | string) : TOneStyle | string => {
   if (!onResponsiveStyle) return undefined;
-  const { width } = useWindowDimensions();
-  const { width : customWidth, useCustomViewport } = useContext(ResponsiveContext);
-  const viewportWidth = useCustomViewport ? customWidth : width;
-  const responsiveRule : TOneStyle = getResponsiveRule(viewportWidth, onResponsiveStyle);
-  return responsiveRule;
+  // const { width } = useWindowDimensions();
+  // const { width : customWidth, useCustomViewport } = useContext(ResponsiveContext);
+  // const viewportWidth = useCustomViewport ? customWidth : width;
+  // const responsiveRule : TOneStyle = getResponsiveRule(viewportWidth, onResponsiveStyle);
+  // return responsiveRule;
+  const breakpoint = useWindowWidthBreakpoint();
+  return findNearestLowerBreakpointValue(breakpoint, onResponsiveStyle);
 };
 
 export function useResponsiveData<T>(rules : IResponsiveRule<T>) : T | undefined {
   if (!rules) return undefined;
-  const { width } = useWindowDimensions();
-  const { width : customWidth, useCustomViewport } = useContext(ResponsiveContext);
-  const viewportWidth = useCustomViewport ? customWidth : width;
-  const responsiveRule = getResponsiveRule(viewportWidth, rules);
-  return responsiveRule;
+  // const { width } = useWindowDimensions();
+  // const { width : customWidth, useCustomViewport } = useContext(ResponsiveContext);
+  // const viewportWidth = useCustomViewport ? customWidth : width;
+  // const responsiveRule = getResponsiveRule(viewportWidth, rules);
+  // return responsiveRule;
+
+  const breakpoint = useWindowWidthBreakpoint();
+  return findNearestLowerBreakpointValue(breakpoint, rules);
 };
