@@ -6,7 +6,7 @@ import {
   ImageStyle,
   useWindowDimensions,
 } from 'react-native';
-import { IResponsiveRule, getResponsiveRule, useWindowWidthBreakpoint } from './useWindowWidthBreakpoint';
+import { IResponsiveRule, TOneBreakpoint, useWindowWidthBreakpoint } from './useWindowWidthBreakpoint';
 
 type TOneStyle = TextStyle & ViewStyle & ImageStyle & any;
 
@@ -108,7 +108,7 @@ export const useResponsiveStyle = (onResponsiveStyle : TOneStyle | string) : TOn
   // const viewportWidth = useCustomViewport ? customWidth : width;
   // const responsiveRule : TOneStyle = getResponsiveRule(viewportWidth, onResponsiveStyle);
   // return responsiveRule;
-  const breakpoint = useWindowWidthBreakpoint();
+  const breakpoint = useWindowWidthBreakpoint(Object.keys(onResponsiveStyle) as Array<TOneBreakpoint>);
   return findNearestLowerBreakpointValue(breakpoint, onResponsiveStyle);
 };
 
@@ -120,6 +120,6 @@ export function useResponsiveData<T>(rules : IResponsiveRule<T>) : T | undefined
   // const responsiveRule = getResponsiveRule(viewportWidth, rules);
   // return responsiveRule;
 
-  const breakpoint = useWindowWidthBreakpoint();
+  const breakpoint = useWindowWidthBreakpoint(Object.keys(rules) as Array<TOneBreakpoint>);
   return findNearestLowerBreakpointValue(breakpoint, rules);
 };

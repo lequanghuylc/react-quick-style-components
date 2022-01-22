@@ -1,5 +1,6 @@
 import { Dimensions, Platform } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useRefState } from '../hooks/useRefState'
 
 export interface IResponsiveRule<T> {
   xs?: T | undefined,
@@ -59,10 +60,41 @@ export const getResponsiveRule : IGetResponsiveRule<any> = (viewportWidth, rules
     return responsiveRule;
 };
 
-export const useWindowWidthBreakpoint = () => {
+export type TOneBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl'
+const allBreakpoints : Array<TOneBreakpoint> = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'];
 
-  const getBreakpoint = () => {
-    return getResponsiveRule(Dimensions.get('window').width, {
+// credit: https://remysharp.com/2010/07/21/throttling-function-calls
+
+// @ts-ignore
+function throttle(fn, threshhold, scope) {
+  threshhold || (threshhold = 250);
+  // @ts-ignore
+  var last, deferTimer;
+  return function () {
+    var context = scope || this;
+
+    var now = +new Date,
+        args = arguments;
+    // @ts-ignore
+    if (last && now < last + threshhold) {
+      // hold on to it
+      // @ts-ignore
+      clearTimeout(deferTimer);
+      deferTimer = setTimeout(function () {
+        last = now;
+        fn.apply(context, args);
+      }, threshhold);
+    } else {
+      last = now;
+      fn.apply(context, args);
+    }
+  };
+}
+
+export const useWindowWidthBreakpoint = (accepts : Array<TOneBreakpoint> = allBreakpoints) => {
+
+  const ruleObject = (() => {
+    const allRule : IResponsiveRule<TOneBreakpoint> = {
       xs: 'xs',
       sm: 'sm',
       md: 'md',
@@ -70,17 +102,28 @@ export const useWindowWidthBreakpoint = () => {
       xl: 'xl',
       xxl: 'xxl',
       xxxl: 'xxxl',
-    });
+    };
+    const obj : IResponsiveRule<TOneBreakpoint> = {};
+    for ( let key in allRule ) {
+      if (!!accepts.includes(key as TOneBreakpoint)) {
+        obj[key] = allRule[key];
+      }
+    }
+    return obj;
+  })();
+
+  const measureBreakpointFromWidth = () => {
+    return getResponsiveRule(Dimensions.get('window').width, ruleObject);
   }
 
-  const [breakpoint, setBreakpoint] = useState<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl'>(getBreakpoint());
+  const [breakpoint, getCurrentBreakpoint, setBreakpoint] = useRefState<TOneBreakpoint>(measureBreakpointFromWidth());
 
-  const updateBreakpoint = () => {
-    const newBreakpoint = getBreakpoint();
-    if (breakpoint !== newBreakpoint) {
+  const updateBreakpoint = throttle(() => {
+    const newBreakpoint = measureBreakpointFromWidth();
+    if (newBreakpoint !== getCurrentBreakpoint()) {
       setBreakpoint(newBreakpoint);
     }
-  };
+  }, 300, undefined);
 
   useEffect(() => {
     Dimensions.addEventListener('change', updateBreakpoint);

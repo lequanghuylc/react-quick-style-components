@@ -10,6 +10,8 @@ export { default as Input } from './components/Input';
 export { default as Img } from './components/Img';
 export { default as Parser } from './utils/parser/ParserReactComponent';
 export { ResponsiveViewport, useResponsiveStyle, useDynamicResponsiveValue } from './components/hooks/useResponsiveStyle';
+export { useWindowWidthBreakpoint, IResponsiveRule } from './components/hooks/useWindowWidthBreakpoint';
+export { useRefState } from './components/hooks/useRefState';
 export { default as CQuery,  withCQuery, ButtonQuery, TextQuery } from './utils/CQuery';
 export { usePropsStyle } from './components/hooks';
 
