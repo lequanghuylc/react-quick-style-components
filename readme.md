@@ -348,12 +348,6 @@ initQuickStyle.setAdditionStyles({
 
 Example `<Text light />`
 
-# Advanced Usage
-
-With the help of `react-native-web`, we can use this library on both web and mobile app. Soon we will want to *write once, run anywhere*. But truly cross-platform is hard to achieve. While some UIs can look the same, some layouts can be responsive, there are still many things to cover like navigation, flow, user behaviour. If you use too many ifs for platform check, and the structrure of web and mobile app are different, then it's not *write once* anymore. It's just *write in the same place*
-
-In attempt to make cross-platform coding more convenient, this library introduce some concept like `Banks - Allocation pattern`, `Header Navigation`. Read more about it [here](banks-allocation-pattern.md).
-
 # UI Builder Support
 
 For now it supports render UI from json. The roadmap for this part is to build a UI Builder to around that json parser. Check example in the link at the begining of this readme.

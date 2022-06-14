@@ -1,1 +1,0 @@
-export { withUIAndCodeTab } from './UIAndCodeTab';
